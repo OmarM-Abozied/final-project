@@ -825,7 +825,7 @@ export default function SellerProfilePage2() {
                           </button>
                           <Link
                             to={"/details"}
-                            state={ property }
+                            state={property}
                             className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-blue-50 shadow-lg"
                           >
                             <Eye className="w-4 h-4 text-blue-600" />
@@ -867,14 +867,14 @@ export default function SellerProfilePage2() {
                           </span>
                           <span className="flex items-center gap-2">
                             <Maximize className="w-5 h-5 text-primary-navy" />
-                            {property.area.toLocaleString()} sqft
+                            {(property.area || 0).toLocaleString()} sqft
                           </span>
                         </div>
 
                         <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                           <div>
                             <div className="font-playfair text-3xl font-bold text-primary-navy">
-                              ${property.price?.toLocaleString()}
+                              ${(property.price || 0).toLocaleString()}
                             </div>
                             <div className="text-sm text-text-light flex items-center gap-1">
                               <Calendar className="w-3 h-3" />

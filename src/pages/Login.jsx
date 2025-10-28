@@ -56,15 +56,8 @@ function Login() {
     if (validateForm()) {
       try {
         const result = await dispatch(login(formData)).unwrap();
-
-        // 🔹 التوجيه حسب الدور
-        if (result.user.role === "seller") {
-          navigate("/sellerProfile");
-        } else if (result.user.role === "buyer") {
           navigate("/");
-        } else {
-          navigate("/developer-dashboard");
-        }
+
       } catch (error) {
         console.error("❌ Login failed:", error);
         const message =
