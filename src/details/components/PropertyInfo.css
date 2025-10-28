@@ -1,0 +1,228 @@
+/* Variables */
+:root {
+  --primary-navy: #1a2b4c;
+  --accent-gold: #f5b700;
+  --white: #ffffff;
+  --light-gray: #f7f7f7;
+  --light-gold: #fcd670;
+  --transition: 0.3s ease;
+}
+
+/* Property Content */
+.property-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+  padding: 20px;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 900px) {
+  .property-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Property Info */
+.property-info h2 {
+  font-size: 2.2rem;
+  color: var(--primary-navy);
+  margin-bottom: 10px;
+  font-weight: bolder;
+}
+
+.property-meta {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
+  margin-bottom: 15px;
+}
+
+.meta-item svg {
+  color: var(--accent-gold);
+  font-size: 1.2rem;
+  margin-right: 10px;
+}
+
+.property-description {
+  margin-bottom: 30px;
+}
+.property-description h3 {
+  font-size: 1.5rem;
+  color: var(--primary-navy);
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+.feTitle {
+  font-size: 1.5rem;
+  color: var(--primary-navy);
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+.feature {
+  display: flex;
+  align-items: center;
+}
+
+.feature svg {
+  color: var(--accent-gold);
+  margin-right: 10px;
+}
+
+/* Property Sidebar */
+.property-sidebar {
+  background-color: var(--light-gray);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  max-width: 350px; /* تمنعها تكبر قوي */
+  margin: 0 auto; /* توسيط sidebar على الموبايل */
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin-bottom: 20px;
+}
+
+.contact-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.contact-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.contact-btn svg {
+  margin-right: 10px;
+}
+
+.btn-call {
+  background-color: var(--primary-navy);
+  color: var(--white);
+}
+
+.btn-call:hover {
+  background-color: #2a4d7c;
+}
+
+.btn-email {
+  background-color: var(--accent-gold);
+  color: var(--primary-navy);
+}
+
+.btn-email:hover {
+  background-color: var(--light-gold);
+}
+
+.btn-whatsapp {
+  background-color: #25d366;
+  color: var(--white);
+}
+
+.btn-whatsapp:hover {
+  background-color: #128c7e;
+}
+
+/* AI Assistant */
+.ai-assistant {
+  background-color: var(--white);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 30px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.ai-assistant h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-navy);
+  margin-bottom: 15px;
+  font-weight: bolder;
+}
+
+.ai-assistant h3 svg {
+  margin-right: 10px;
+  color: var(--accent-gold);
+}
+
+.ai-assistant p {
+  margin-bottom: 15px;
+}
+
+.ai-assistant input.ai-input,
+.ai-assistant button.ai-btn {
+  width: 90%;
+  max-width: 300px;
+  margin: 0 auto 10px;
+  display: block;
+}
+
+.ai-assistant input.ai-input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.ai-assistant button.ai-btn {
+  padding: 12px;
+  border: none;
+  background-color: var(--primary-navy);
+  color: var(--white);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.ai-assistant button.ai-btn:hover {
+  background-color: #2a4d7c;
+}
+
+/* Chatbot */
+.chatbot {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: var(--accent-gold);
+  color: var(--primary-navy);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  z-index: 999;
+}
+
+.chatbot:hover {
+  transform: scale(1.1);
+}

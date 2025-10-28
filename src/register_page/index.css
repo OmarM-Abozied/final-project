@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "tailwindcss";
+@layer base {
+  :root {
+    --primary-navy: #1e3a5f;
+    --accent-gold: #d4af37;
+    --light-gold: #f5e6a8;
+    --text-dark: #2c3e50;
+    --text-light: #6c757d;
+    --white: #ffffff;
+    --light-gray: #f8f9fa;
+  }
+}

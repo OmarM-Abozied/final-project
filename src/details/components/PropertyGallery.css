@@ -1,0 +1,124 @@
+.property-gallery {
+  width: 85%; /* خلي الصور تاخد 85% من العرض */
+  max-width: 1200px; /* حد أقصى */
+  margin: 0 auto;
+  position: relative; /* مهم علشان الأسهم تظهر جوه */
+  margin-top: 120px;
+}
+
+/* الصورة الرئيسية */
+.gallery-main {
+  position: relative;
+  width: 100%;
+  height: 500px; /* ارتفاع ثابت */
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+/* الصورة نفسها */
+.gallery-main img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+  transition: transform 0.7s ease, opacity 0.7s ease;
+}
+
+/* تأثير تكبير خفيف على hover */
+.gallery-main img:hover {
+  transform: scale(1.03);
+}
+
+/* الأسهم */
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  pointer-events: none; /* خلي التفاعل للأزرار فقط */
+}
+
+.gallery-nav button {
+  pointer-events: all;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--primary-navy);
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.gallery-nav button:hover {
+  transform: scale(1.2);
+}
+
+/* VR Badge */
+.vr-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: var(--accent-gold);
+  color: var(--primary-navy);
+  padding: 10px 15px;
+  border-radius: 30px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.vr-badge:hover {
+  background-color: var(--light-gold);
+  transform: translateY(-2px);
+}
+
+/* الثمبنيل */
+.gallery-thumbs {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  background-color: var(--light-gray);
+  margin-top: 10px;
+}
+
+.thumb {
+  width: 100px;
+  height: 70px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  overflow: hidden;
+  opacity: 0.7;
+  transition: var(--transition);
+}
+
+.thumb:hover,
+.thumb.active {
+  opacity: 1;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Animation */
+@keyframes slide {
+  0% {
+    opacity: 0;
+    transform: translateX(50%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

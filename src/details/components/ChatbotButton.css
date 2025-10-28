@@ -1,0 +1,15 @@
+/* Floating AI Assistant */
+.ai-assistant {
+  position: sticky; /* يبقى ثابت أثناء التمرير */
+  top: 20px; /* يبتدي من 20px من فوق */
+  max-width: 350px;
+}
+
+@media (max-width: 900px) {
+  .ai-assistant {
+    position: relative; /* يتحول تحت المحتوى على الموبايل */
+    top: 0;
+    margin: 20px auto 0;
+    width: 95%;
+  }
+}

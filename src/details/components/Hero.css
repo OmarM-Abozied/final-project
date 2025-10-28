@@ -1,0 +1,22 @@
+/* ✅ Full width container with padding */
+.container-full {
+  width: 100%;
+  max-width: 1400px; /* لو عايزة تحددي أقصى عرض */
+  margin: 0 auto;
+  padding: 0 4rem; /* 👈 padding يمين وشمال */
+}
+
+/* ✅ Responsive fix for smaller screens */
+@media (max-width: 768px) {
+  .container-full {
+    padding: 0 2rem;
+  }
+
+  .hero h1 {
+    font-size: 2.8rem;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+  }
+}

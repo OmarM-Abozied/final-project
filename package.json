@@ -1,0 +1,56 @@
+{
+  "name": "ai-agent-pricing-page",
+  "version": "1.0.0",
+  "description": "Modern AI Agent pricing and marketing page for real estate SaaS platform",
+  "main": "src/pages/AiAgentPlans.jsx",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "dependencies": {
+    "@heroicons/react": "^2.0.18",
+    "@hookform/resolvers": "^5.2.2",
+    "@reduxjs/toolkit": "^2.9.2",
+    "axios": "^1.12.2",
+    "bootstrap": "^5.3.8",
+    "framer-motion": "^10.16.4",
+    "lottie-react": "^2.4.1",
+    "lucide-react": "^0.545.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.65.0",
+    "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.9.4",
+    "yup": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "gh-pages": "^6.3.0",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.4.18",
+    "vite": "^4.4.5"
+  },
+  "keywords": [
+    "react",
+    "tailwindcss",
+    "framer-motion",
+    "real-estate",
+    "ai-agent",
+    "pricing-page",
+    "saas"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
