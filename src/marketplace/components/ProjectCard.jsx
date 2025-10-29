@@ -2,18 +2,21 @@ import { motion } from 'framer-motion';
 import { FaMapMarkerAlt, FaBuilding, FaCar, FaSwimmingPool, FaDumbbell, FaShieldAlt } from 'react-icons/fa';
 
 const ProjectCard = ({ project, onClick, isAiRecommended = false }) => {
-  const {
-    id,
-    name,
-    city,
-    developer,
-    status,
-    image,
-    price,
-    units,
-    features = []
-  } = project;
+const {
+  _id,
+  projectName,
+  location,
+  developer,
+  status,
+  images = [],
+  price,
+  units,
+  features = [],
+} = project;
 
+const city = location?.city || location?.area || "Unknown";
+const image = images[0] || "https://via.placeholder.com/600x400";
+const developerName = developer?.name || "Developer";
   const statusConfig = {
     'under-construction': { color: 'bg-blue-500', label: 'Under Construction' },
     'completed': { color: 'bg-green-500', label: 'Completed' },
@@ -52,15 +55,17 @@ const ProjectCard = ({ project, onClick, isAiRecommended = false }) => {
           alt={name}
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
         />
-        
+
         {/* Status Badge */}
-        <div className={`absolute top-4 right-4 ${currentStatus.color} text-white px-4 py-2 rounded-full shadow-lg font-semibold text-sm`}>
+        <div
+          className={`absolute top-4 right-4 ${currentStatus.color} text-white px-4 py-2 rounded-full shadow-lg font-semibold text-sm`}
+        >
           {currentStatus.label}
         </div>
 
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-        
+
         {/* Price Badge */}
         {price && (
           <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg shadow-lg">
@@ -74,7 +79,7 @@ const ProjectCard = ({ project, onClick, isAiRecommended = false }) => {
       <div className="p-5">
         {/* Project Name */}
         <h3 className="text-xl font-bold text-text-dark mb-2 hover:text-primary-navy transition-colors line-clamp-1">
-          {name}
+          {projectName}
         </h3>
 
         {/* Location */}
@@ -86,14 +91,15 @@ const ProjectCard = ({ project, onClick, isAiRecommended = false }) => {
         {/* Developer */}
         <div className="flex items-center gap-2 text-text-light mb-4">
           <FaBuilding className="text-primary-navy flex-shrink-0" />
-          <span className="text-sm font-medium">{developer}</span>
+          <span className="text-sm font-medium">{developerName}</span>
         </div>
 
         {/* Units Info */}
         {units && (
           <div className="mb-4 pb-4 border-b border-border-light">
             <p className="text-sm text-text-light">
-              <span className="font-semibold text-text-dark">{units}</span> units available
+              <span className="font-semibold text-text-dark">{units}</span>{" "}
+              units available
             </p>
           </div>
         )}

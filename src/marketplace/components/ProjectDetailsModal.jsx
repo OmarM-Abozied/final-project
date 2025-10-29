@@ -259,15 +259,21 @@ const ProjectDetailsModal = ({ project, isOpen, onClose }) => {
                   {/* Developer Info */}
                   <DeveloperInfoCard
                     developer={{
-                      name: developerInfo.name || "Developer Name", // لو الاسم موجود
-                      ...developerInfo,
+                      name: developer?.name || "Developer Name",
+                      logo: developerInfo?.logo,
+                      location: developerInfo?.location,
+                      totalProjects: developerInfo?.totalProjects,
+                      phone: developer?.phone || developerInfo?.phone,
+                      email: developer?.email || developerInfo?.email,
+                      website: developerInfo?.website,
+                      description: developerInfo?.description,
                     }}
                   />
 
                   {showInquiryForm && (
                     <InquiryForm
                       projectName={projectName}
-                      developerName={developerInfo.name || "Developer Name"}
+                      developerName={developer?.name || "Developer"}
                     />
                   )}
                 </div>

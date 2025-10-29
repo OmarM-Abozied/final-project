@@ -3,10 +3,10 @@ import { FaBuilding, FaHammer, FaCheckCircle, FaClock } from 'react-icons/fa';
 
 const ProjectFilterBar = ({ activeFilter, onFilterChange }) => {
   const filters = [
-    { id: 'all', label: 'All Projects', icon: FaBuilding },
-    { id: 'under-construction', label: 'Under Construction', icon: FaHammer },
-    { id: 'completed', label: 'Completed', icon: FaCheckCircle },
-    { id: 'upcoming', label: 'Upcoming', icon: FaClock }
+    { id: "all", label: "All Projects", icon: FaBuilding },
+    { id: "under-construction", label: "Under Construction", icon: FaHammer },
+    { id: "completed", label: "Completed", icon: FaCheckCircle },
+    { id: "planned", label: "Upcoming", icon: FaClock },
   ];
 
   return (

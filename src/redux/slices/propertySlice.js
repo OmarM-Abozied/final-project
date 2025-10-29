@@ -10,6 +10,17 @@ export const getALLproperty = createAsyncThunk(
   }
 );
 
+
+// ✅ Get developer properties
+export const getDeveloperProperties = createAsyncThunk(
+  "properties/getDeveloperProperties", // 🔹 غير الاسم
+  async () => {
+    const res = await apiAxios.get("/properties/developers");
+    return res.data.data;
+  }
+);
+
+
 // ✅ Get property by ID
 export const getPropertyById = createAsyncThunk(
   "properties/getPropertyById",
@@ -76,6 +87,7 @@ const propertySlice = createSlice({
   initialState: {
     properties: [],
     sellerProperties: [],
+    developerProperties: [], // 🔹 جديد
     singleProperty: null,
   },
   extraReducers: (builder) => {
@@ -111,6 +123,9 @@ const propertySlice = createSlice({
         state.properties = state.properties.map((property) =>
           property._id === action.payload._id ? action.payload : property
         );
+      })
+      .addCase(getDeveloperProperties.fulfilled, (state, action) => {
+        state.developerProperties = action.payload;
       });
   },
 });

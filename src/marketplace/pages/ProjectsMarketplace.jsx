@@ -1,63 +1,75 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FaTimes } from 'react-icons/fa';
-import ProjectsHero from '../components/ProjectsHero';
-import ProjectFilterBar from '../components/ProjectFilterBar';
-import ProjectCard from '../components/ProjectCard';
-import ProjectDetailsModal from '../components/ProjectDetailsModal';
-import AiChatButton from '../components/AiChatButton';
-import AiChatModal from '../components/AiChatModal';
-import AiRecommendationSection from '../components/AiRecommendationSection';
-import sampleProjects from '../data/sampleProjects';
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
+import { FaTimes } from "react-icons/fa";
+import { getDeveloperProperties } from "../../redux/slices/propertySlice";
+
+import ProjectsHero from "../components/ProjectsHero";
+import ProjectFilterBar from "../components/ProjectFilterBar";
+import ProjectCard from "../components/ProjectCard";
+import ProjectDetailsModal from "../components/ProjectDetailsModal";
+import AiChatButton from "../components/AiChatButton";
+import AiChatModal from "../components/AiChatModal";
+import AiRecommendationSection from "../components/AiRecommendationSection";
 
 const ProjectsMarketplace = () => {
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
+  const dispatch = useDispatch();
+
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
   const [selectedProject, setSelectedProject] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [showUpgradeBanner, setShowUpgradeBanner] = useState(true);
 
-  // Filter projects based on active filters
-  const filteredProjects = sampleProjects.filter(project => {
-    // Status filter
-    if (activeFilter !== 'all' && project.status !== activeFilter) {
-      return false;
-    }
+  const { developerProperties = [], loading = false } = useSelector(
+    (state) => state.propertiesReducer || {}
+  );
 
-    // City filter
-    if (selectedCity && project.city.toLowerCase() !== selectedCity.toLowerCase()) {
-      return false;
-    }
+  useEffect(() => {
+    dispatch(getDeveloperProperties());
+  }, [dispatch]);
 
-    // Search query filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      return (
-        project.name.toLowerCase().includes(query) ||
-        project.city.toLowerCase().includes(query) ||
-        project.developer.toLowerCase().includes(query)
-      );
-    }
-
-    return true;
-  });
+  // Filtered projects with useMemo for performance
+  const filteredProjects = useMemo(() => {
+    return developerProperties.filter((project) => {
+      if (activeFilter !== "all" && project.status !== activeFilter)
+        return false;
+      if (
+        selectedCity &&
+        project.city?.toLowerCase() !== selectedCity.toLowerCase()
+      )
+        return false;
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        return (
+          project.name?.toLowerCase().includes(query) ||
+          project.city?.toLowerCase().includes(query) ||
+          project.developer?.toLowerCase().includes(query)
+        );
+      }
+      return true;
+    });
+  }, [activeFilter, selectedCity, searchQuery, developerProperties]);
 
   const handleProjectClick = (project) => {
     setSelectedProject(project);
     setIsDetailsModalOpen(true);
   };
 
-  const handleSearch = (query) => {
-    setSearchQuery(query);
+  const handleSearch = (query) => setSearchQuery(query);
+  const handleFilterChange = (type, value) => {
+    if (type === "city") setSelectedCity(value);
   };
 
-  const handleFilterChange = (type, value) => {
-    if (type === 'city') {
-      setSelectedCity(value);
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-light-gray">
+        <div className="text-2xl font-bold text-primary-navy">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-light-gray">
@@ -72,7 +84,8 @@ const ProjectsMarketplace = () => {
             <div className="flex items-center gap-3">
               <span className="text-2xl">✨</span>
               <p className="text-sm md:text-base font-medium">
-                <strong>Upgrade to AI Plan</strong> for Smart Property Recommendations & Advanced Search
+                <strong>Upgrade to AI Plan</strong> for Smart Property
+                Recommendations & Advanced Search
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -97,14 +110,14 @@ const ProjectsMarketplace = () => {
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
-        <ProjectsHero 
+        <ProjectsHero
           onSearch={handleSearch}
           onFilterChange={handleFilterChange}
         />
 
         {/* AI Recommendations */}
-        <AiRecommendationSection 
-          projects={sampleProjects}
+        <AiRecommendationSection
+          projects={developerProperties}
           onProjectClick={handleProjectClick}
         />
 
@@ -125,7 +138,7 @@ const ProjectsMarketplace = () => {
             >
               {filteredProjects.map((project) => (
                 <ProjectCard
-                  key={project.id}
+                  key={project._id}
                   project={project}
                   onClick={handleProjectClick}
                 />
@@ -148,9 +161,9 @@ const ProjectsMarketplace = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  setActiveFilter('all');
-                  setSearchQuery('');
-                  setSelectedCity('');
+                  setActiveFilter("all");
+                  setSearchQuery("");
+                  setSelectedCity("");
                 }}
                 className="px-8 py-3 bg-accent-gold text-white rounded-lg font-semibold hover:shadow-lg transition-all"
               >
@@ -163,7 +176,8 @@ const ProjectsMarketplace = () => {
         {/* Results Summary */}
         {filteredProjects.length > 0 && (
           <div className="text-center text-text-light">
-            Showing {filteredProjects.length} of {sampleProjects.length} projects
+            Showing {filteredProjects.length} of {developerProperties.length}{" "}
+            projects
           </div>
         )}
       </div>
