@@ -92,17 +92,17 @@ export default function Navbar() {
                 onClick={() => navigate("/marketplace")}
                 className="text-white font-medium hover:text-accent-gold transition-colors relative group"
               >
-                New Project
+                Real Estate Projects
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent-gold group-hover:w-full transition-all duration-300"></span>
               </button>
             </li>
 
-            <li>
+            {/* <li>
               <button className="text-white font-medium hover:text-accent-gold transition-colors relative group">
                 About
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent-gold group-hover:w-full transition-all duration-300"></span>
               </button>
-            </li>
+            </li> */}
 
             <li>
               <button
