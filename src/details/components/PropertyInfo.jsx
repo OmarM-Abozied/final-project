@@ -35,9 +35,9 @@ const PropertyInfo = () => {
         <div className="meta-item">
           <FaRulerCombined /> {property?.area || "3,200"} sq ft
         </div>
-        <div className="meta-item">
+        {/* <div className="meta-item">
           <FaCar /> {property?.garage || 2} Garage
-        </div>
+        </div> */}
       </div>
 
       <div className="property-description">
