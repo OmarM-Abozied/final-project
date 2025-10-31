@@ -636,6 +636,10 @@ useEffect(() => {
                       ? "border-accent-gold bg-light-gold"
                       : "border-border-light hover:border-accent-gold"
                   }`}
+                  onDragEnter={handleDrag}
+                  onDragOver={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDrop={handleDrop}
                 >
                   <label
                     htmlFor="fileInput"
