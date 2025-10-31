@@ -10,7 +10,6 @@ export const getALLproperty = createAsyncThunk(
   }
 );
 
-
 // ✅ Get developer properties
 export const getDeveloperProperties = createAsyncThunk(
   "properties/getDeveloperProperties", // 🔹 غير الاسم
@@ -19,7 +18,6 @@ export const getDeveloperProperties = createAsyncThunk(
     return res.data.data;
   }
 );
-
 
 // ✅ Get property by ID
 export const getPropertyById = createAsyncThunk(
@@ -67,14 +65,14 @@ export const updateProperty = createAsyncThunk(
   }
 );
 
-
-
 // ✅ Create new property
 export const createProperty = createAsyncThunk(
   "properties/createProperty",
   async (newProperty, { rejectWithValue }) => {
     try {
-      const res = await apiAxios.post("/properties/", newProperty);
+      const res = await apiAxios.post("/properties/", newProperty, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return res.data.property;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);

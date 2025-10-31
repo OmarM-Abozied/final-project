@@ -38,58 +38,32 @@ const AddProjectForm = ({ isOpen, onClose, editingProject }) => {
 
   const [dragActive, setDragActive] = useState(false);
 
-useEffect(() => {
-  if (editingProject) {
-    // 🟡 Edit Mode
-    setFormData({
-      projectName: editingProject.projectName || "",
-      city: editingProject.location?.city || "",
-      area: editingProject.location?.area || "",
-      description: editingProject.description || "",
-      price: editingProject.price || "",
-      units: editingProject.units || "",
-      completionPercentage: editingProject.completionPercentage || "",
-      status: editingProject.status || "under-construction",
-      nearBy: editingProject.location?.nearBy?.join(", ") || "",
-      features: editingProject.features?.join(", ") || "",
-      developerLogo: editingProject.developerInfo?.logo || "",
-      developerLocation: editingProject.developerInfo?.location || "",
-      totalProjects: editingProject.developerInfo?.totalProjects || "",
-      developerPhone: editingProject.developerInfo?.phone || "",
-      developerEmail: editingProject.developerInfo?.email || "",
-      developerWebsite: editingProject.developerInfo?.website || "",
-      developerDescription: editingProject.developerInfo?.description || "",
-      images: [],
-      oldImages: editingProject.images || [],
-    });
-  } else {
-    // 🟢 Add Mode — Reset form
-    setFormData({
-      projectName: "",
-      city: "",
-      area: "",
-      description: "",
-      price: "",
-      units: "",
-      completionPercentage: "",
-      status: "under-construction",
-      nearBy: "",
-      features: "",
-      developerLogo: "",
-      developerLocation: "",
-      totalProjects: "",
-      developerPhone: "",
-      developerEmail: "",
-      developerWebsite: "",
-      developerDescription: "",
-      images: [],
-      oldImages: [],
-    });
-  }
-  // 🧹 Clean old messages every time mode changes
-  setErrorMessage("");
-  setSuccessMessage("");
-}, [editingProject]);
+  // Fill form in edit mode
+  useEffect(() => {
+    if (editingProject) {
+      setFormData({
+        projectName: editingProject.projectName || "",
+        city: editingProject.location?.city || "",
+        area: editingProject.location?.area || "",
+        description: editingProject.description || "",
+        price: editingProject.price || "",
+        units: editingProject.units || "",
+        completionPercentage: editingProject.completionPercentage || "",
+        status: editingProject.status || "under-construction",
+        nearBy: editingProject.location?.nearBy?.join(", ") || "",
+        features: editingProject.features?.join(", ") || "",
+        developerLogo: editingProject.developerInfo?.logo || "",
+        developerLocation: editingProject.developerInfo?.location || "",
+        totalProjects: editingProject.developerInfo?.totalProjects || "",
+        developerPhone: editingProject.developerInfo?.phone || "",
+        developerEmail: editingProject.developerInfo?.email || "",
+        developerWebsite: editingProject.developerInfo?.website || "",
+        developerDescription: editingProject.developerInfo?.description || "",
+        images: [],
+        oldImages: editingProject.images || [],
+      });
+    }
+  }, [editingProject]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -623,20 +597,56 @@ useEffect(() => {
               </div>
 
               {/* Image Upload */}
-              {/* Image Upload */}
               <div className="border-t border-border-light pt-6">
                 <h3 className="text-lg font-bold text-text-dark mb-4">
-                  Project Images
+                  Project Images (max 5)
                 </h3>
 
-                {/* Upload Button */}
+                {/* Old Images */}
+                {formData.oldImages.length > 0 && (
+                  <div className="flex gap-4 mb-4 flex-wrap">
+                    {formData.oldImages.map((img, i) => (
+                      <div
+                        key={i}
+                        className="relative w-24 h-24 border border-border-light rounded-lg overflow-hidden"
+                      >
+                        <img
+                          src={img}
+                          alt="old"
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeOldImage(i)}
+                          className="absolute top-1 right-1 text-white bg-red-500 rounded-full p-1"
+                        >
+                          <FaTimes />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* New Images */}
                 <div
-                  className={`mb-6 relative border-2 border-dashed rounded-lg p-8 text-center transition-all ${
+                  onDragEnter={handleDrag}
+                  onDragOver={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDrop={handleDrop}
+                  className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-all ${
                     dragActive
                       ? "border-accent-gold bg-light-gold"
                       : "border-border-light hover:border-accent-gold"
                   }`}
                 >
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="fileInput"
+                  />
                   <label
                     htmlFor="fileInput"
                     className="cursor-pointer flex flex-col items-center justify-center"
@@ -647,124 +657,38 @@ useEffect(() => {
                         ? "Add More Images"
                         : " Drag and drop images here"}
                     </p>
-                    <input
-                      id="fileInput"
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
+                    <p className="text-text-light text-sm mb-3">or</p>
+                    <label
+                      htmlFor="fileInput"
+                      className="inline-block px-6 py-2 bg-accent-gold text-white rounded-lg cursor-pointer hover:bg-opacity-90 transition-all"
+                    >
+                      Browse Files
+                    </label>
                   </label>
-                  <p className="text-sm text-text-light mt-2">
-                    Select multiple images (min 5). Supported formats: JPG, PNG,
-                    GIF
-                  </p>
-                </div>
-
-                {/* Existing Images (Old) */}
-                {formData.oldImages.length > 0 && (
-                  <div className="space-y-4 mb-6">
-                    <h4 className="font-semibold text-text-dark flex items-center gap-2">
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
-                        Existing
-                      </span>
-                      Current Images ({formData.oldImages.length})
-                    </h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {formData.oldImages.map((imageUrl, index) => (
+                  {formData.images.length > 0 && (
+                    <div className="flex gap-4 mt-4 flex-wrap">
+                      {formData.images.map((file, i) => (
                         <div
-                          key={imageUrl} // استخدم imageUrl كـ key
-                          className="relative group rounded-xl overflow-hidden border-2 border-blue-200 hover:border-blue-400 transition-all duration-300"
-                        >
-                          <img
-                            src={imageUrl}
-                            alt={`Existing ${index + 1}`}
-                            className="w-full h-32 object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-
-                          {/* Existing Badge */}
-                          <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                            Existing
-                          </div>
-
-                          {/* Remove Button */}
-                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                              type="button"
-                              onClick={() => removeOldImage(index)}
-                              className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
-                              title="Remove image"
-                            >
-                              <FaTimes className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* New Images */}
-                {formData.images.length > 0 && (
-                  <div className="space-y-4">
-                    <h4 className="font-semibold text-text-dark flex items-center gap-2">
-                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
-                        New
-                      </span>
-                      New Images ({formData.images.length})
-                    </h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      {formData.images.map((file, index) => (
-                        <div
-                          key={file.name + file.lastModified + index} // key فريد
-                          className="relative group rounded-xl overflow-hidden border-2 border-green-200 hover:border-green-400 transition-all duration-300"
+                          key={i}
+                          className="relative w-24 h-24 border border-border-light rounded-lg overflow-hidden"
                         >
                           <img
                             src={URL.createObjectURL(file)}
-                            alt={`New ${index + 1}`}
-                            className="w-full h-32 object-cover"
+                            alt="preview"
+                            className="w-full h-full object-cover"
                           />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-
-                          {/* New Badge */}
-                          <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                            New
-                          </div>
-
-                          {/* Remove Button */}
-                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                              type="button"
-                              onClick={() => removeImage(index)}
-                              className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
-                              title="Remove image"
-                            >
-                              <FaTimes className="w-3 h-3" />
-                            </button>
-                          </div>
-
-                          {/* File Name */}
-                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-                            <p className="text-white text-xs truncate">
-                              {file.name}
-                            </p>
-                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeImage(i)}
+                            className="absolute top-1 right-1 text-white bg-red-500 rounded-full p-1"
+                          >
+                            <FaTimes />
+                          </button>
                         </div>
                       ))}
                     </div>
-                  </div>
-                )}
-
-                {/* Total Count */}
-                <p className="text-sm text-text-light mt-3">
-                  {editingProject
-                    ? `Total images: ${
-                        formData.oldImages.length + formData.images.length
-                      } (Max 10)`
-                    : "Minimum 5 photos required."}
-                </p>
+                  )}
+                </div>
               </div>
               {/* Action Buttons */}
               <div className="flex gap-4 pt-4">

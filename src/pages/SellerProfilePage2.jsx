@@ -34,6 +34,8 @@ import {
   Search,
   Loader2,
 } from "lucide-react";
+import { FaUpload } from "react-icons/fa";
+
 import {
   createProperty,
   deleteProperty,
@@ -49,6 +51,7 @@ export default function SellerProfilePage2() {
   );
 
   const { user } = useSelector((state) => state.authReducer);
+  const [dragActive, setDragActive] = useState(false);
 
   // (removed unused activeTab state)
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -97,6 +100,8 @@ export default function SellerProfilePage2() {
     titleDeed: null,
     floorPlan: null,
   });
+  const [oldImages, setOldImages] = useState([]); // 👈 أضف دي للصور القديمة
+  const [removedImages, setRemovedImages] = useState([]); // 👈 الصور اللي هتمسح
 
   const [imagePreviews, setImagePreviews] = useState([]);
   const [mainImageIndex, setMainImageIndex] = useState(0); // Index of the main image
@@ -308,6 +313,7 @@ export default function SellerProfilePage2() {
     setSubmitError("");
     setSubmitSuccess(false);
     setImageFiles([]);
+    setOldImages([]); // 👈 أضف دي
     setImagePreviews([]);
     setMainImageIndex(0);
     setEditMode(false); // 🆕
@@ -355,7 +361,9 @@ export default function SellerProfilePage2() {
       isFeatured: property.isFeatured || false,
       termsAccepted: true,
     });
-
+    // 👇 حمّل الصور القديمة
+    setOldImages(property.images || []);
+    setImageFiles([]); // مسح الصور الجديدة
     setShowUploadModal(true);
     setUploadStep(1);
   };
@@ -376,10 +384,21 @@ export default function SellerProfilePage2() {
     setSubmitError("");
 
     try {
-      // 🆕 فحص إذا كان وضع التعديل
+      let updatedProperty;
+
       if (editMode) {
-        // ✅ Update Mode
+        // ✅ منع الإرسال لو عدد الصور أقل من 5
+        const totalImagesCount =
+          (oldImages?.length || 0) + (imageFiles?.length || 0);
+        if (totalImagesCount < 5) {
+          setSubmitError("At least 5 images are required for a property.");
+          setIsSubmitting(false);
+          return;
+        }
+
+        // Update Mode
         if (imageFiles && imageFiles.length > 0) {
+          // مع صور جديدة
           const fd = new FormData();
           fd.append("title", formData.title);
           fd.append("type", formData.type);
@@ -402,6 +421,8 @@ export default function SellerProfilePage2() {
           fd.append("isFeatured", String(Boolean(formData.isFeatured)));
           fd.append("termsAccepted", String(Boolean(formData.termsAccepted)));
           fd.append("mainImageIndex", String(mainImageIndex));
+          fd.append("existingImages", JSON.stringify([...oldImages]));
+          fd.append("removeImages", JSON.stringify(removedImages));
 
           imageFiles.forEach((file) => fd.append("images", file));
           if (documentsFiles.titleDeed)
@@ -409,11 +430,11 @@ export default function SellerProfilePage2() {
           if (documentsFiles.floorPlan)
             fd.append("documents", documentsFiles.floorPlan);
 
-          await dispatch(
+          updatedProperty = await dispatch(
             updateProperty({ id: editingPropertyId, updatedData: fd })
           ).unwrap();
         } else {
-          // Update without new images
+          // بدون صور جديدة
           const propertyData = {
             title: formData.title,
             type: formData.type,
@@ -424,23 +445,29 @@ export default function SellerProfilePage2() {
               nearBy: formData.location.nearBy,
             },
             price: Number(formData.price),
-            area: Number(formData.area),
-            bedrooms: Number(formData.bedrooms),
-            bathrooms: Number(formData.bathrooms),
+            area: Number(formData.area || 0),
+            bedrooms: Number(formData.bedrooms || 0),
+            bathrooms: Number(formData.bathrooms || 0),
             listingStatus: formData.listingStatus,
             status: formData.status || "available",
-            images: formData.images,
+            images: oldImages,
             features: formData.features,
             isFeatured: formData.isFeatured,
             termsAccepted: formData.termsAccepted,
           };
 
-          await dispatch(
+          updatedProperty = await dispatch(
             updateProperty({ id: editingPropertyId, updatedData: propertyData })
           ).unwrap();
         }
+
+        // تحديث الصور القديمة بعد الرد
+        setOldImages(updatedProperty.images || []);
+        setImageFiles([]);
+        setImagePreviews(updatedProperty.images || []);
+        setRemovedImages([]);
       } else {
-        // ✅ Create Mode (الكود الأصلي)
+        // Create Mode
         if (imageFiles && imageFiles.length > 0) {
           const fd = new FormData();
           fd.append("title", formData.title);
@@ -531,6 +558,7 @@ export default function SellerProfilePage2() {
       setIsSubmitting(false);
     }
   };
+
   const propertyFeatures = [
     "Swimming Pool",
     "Garden",
@@ -570,6 +598,11 @@ export default function SellerProfilePage2() {
     setShowDeleteModal(false);
     setPropertyToDelete(null);
   };
+  // 👇 أضف الدالة دي بعد handleRemoveImage
+  const handleRemoveOldImage = (index) => {
+    setRemovedImages((prev) => [...prev, oldImages[index]]); // خلي الـ URL في removedImages
+    setOldImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white font-inter">
@@ -585,13 +618,13 @@ export default function SellerProfilePage2() {
             <div className="flex justify-end gap-4">
               <button
                 onClick={cancelDelete}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition"
+                className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-red-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
               >
                 Delete
               </button>
@@ -1164,9 +1197,9 @@ export default function SellerProfilePage2() {
                                 },
                               }))
                             }
-                            className="text-red-500 font-bold"
+                            className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
                           >
-                            ✕
+                            <X className="w-4 h-4" />
                           </button>
                         </li>
                       ))}
@@ -1273,7 +1306,7 @@ export default function SellerProfilePage2() {
             {/* Step 2: Photos */}
             {uploadStep === 2 && (
               <div className="p-6 space-y-6">
-                <div className="border-2 border-dashed border-accent-gold/30 rounded-2xl p-6 hover:border-accent-gold/60 transition-colors bg-accent-gold/5">
+                <div className="border-2 border-dashed border-accent-gold/30 rounded-2xl p-6 hover:border-accent-gold/60 transition-colors ">
                   <div className="flex items-start gap-6">
                     <div className="w-20 h-20 bg-gradient-to-br from-accent-gold to-yellow-600 rounded-full flex items-center justify-center">
                       <Upload className="w-10 h-10 text-white" />
@@ -1283,19 +1316,29 @@ export default function SellerProfilePage2() {
                         Upload Property Photos
                       </h3>
                       <p className="text-text-light mb-4">
-                        Select multiple images at once. The first image will be
-                        marked as the main image by default, but you can change
-                        it later.
+                        {editMode
+                          ? "You can keep existing images or upload new ones. Existing images will be kept unless you remove them."
+                          : "Select multiple images at once. The first image will be marked as the main image by default, but you can change it later."}
                       </p>
 
                       {/* Custom Upload Button */}
-                      <div className="mb-6">
+                      <div
+                        className={`mb-6 relative border-2 border-dashed rounded-lg p-8 text-center transition-all ${
+                          dragActive
+                            ? "border-accent-gold bg-light-gold"
+                            : "border-border-light hover:border-accent-gold"
+                        }`}
+                      >
                         <label
                           htmlFor="image-upload"
-                          className="group inline-flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-accent-gold to-yellow-600 hover:from-yellow-600 hover:to-accent-gold text-primary-navy font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                          className="cursor-pointer flex flex-col items-center justify-center"
                         >
-                          <ImageIcon className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                          <span>Choose Images</span>
+                          <FaUpload className="mx-auto text-4xl text-accent-gold mb-3" />
+                          <p className="text-text-dark font-medium mb-1">
+                            {editMode
+                              ? "Add More Images"
+                              : " Drag and drop images here"}
+                          </p>
                           <input
                             id="image-upload"
                             type="file"
@@ -1304,30 +1347,65 @@ export default function SellerProfilePage2() {
                             onChange={(e) => {
                               const files = Array.from(e.target.files || []);
                               setImageFiles((prev) => [...prev, ...files]);
-                              if (
-                                files.length > 0 &&
-                                mainImageIndex >= files.length
-                              ) {
-                                setMainImageIndex(0);
-                              }
-
-                              // ✅ Reset input value so user can re-upload the same file later
                               e.target.value = null;
                             }}
                             className="hidden"
                           />
                         </label>
-                        <p className="text-sm text-text-light mt-2">
-                          Select multiple images (max 20). Supported formats:
-                          JPG, PNG, GIF
-                        </p>
                       </div>
 
-                      {/* Image Previews with Main Image Selection */}
+                      {/* 👇 عرض الصور القديمة */}
+                      {oldImages.length > 0 && (
+                        <div className="space-y-4 mb-6">
+                          <h4 className="font-semibold text-primary-navy flex items-center gap-2">
+                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
+                              Existing
+                            </span>
+                            Current Images ({oldImages.length})
+                          </h4>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {oldImages.map((imageUrl, index) => (
+                              <div
+                                key={`old-${index}`}
+                                className="relative group rounded-xl overflow-hidden border-2 border-blue-200 hover:border-blue-400 transition-all duration-300"
+                              >
+                                <img
+                                  src={imageUrl}
+                                  alt={`Existing ${index + 1}`}
+                                  className="w-full h-32 object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+
+                                {/* Existing Badge */}
+                                <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                  Existing
+                                </div>
+
+                                {/* Remove Button */}
+                                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveOldImage(index)}
+                                    className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
+                                    title="Remove image"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 👇 عرض الصور الجديدة */}
                       {imageFiles.length > 0 && (
                         <div className="space-y-4">
-                          <h4 className="font-semibold text-primary-navy">
-                            Selected Images ({imageFiles.length})
+                          <h4 className="font-semibold text-primary-navy flex items-center gap-2">
+                            <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
+                              New
+                            </span>
+                            New Images ({imageFiles.length})
                           </h4>
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {imageFiles.map((file, index) => (
@@ -1347,10 +1425,17 @@ export default function SellerProfilePage2() {
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
 
                                 {/* Main Image Badge */}
-                                {index === mainImageIndex && (
+                                {!editMode && index === mainImageIndex && (
                                   <div className="absolute top-2 left-2 bg-accent-gold text-primary-navy px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
                                     <CheckCircle className="w-3 h-3" />
                                     Main
+                                  </div>
+                                )}
+
+                                {/* New Badge */}
+                                {index !== mainImageIndex && (
+                                  <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                    New
                                   </div>
                                 )}
 
@@ -1399,9 +1484,11 @@ export default function SellerProfilePage2() {
                       )}
 
                       <p className="text-sm text-text-light mt-3">
-                        Maximum 20 photos. The server requires at least one
-                        image. The main image will be displayed on property
-                        cards.
+                        {editMode
+                          ? "Total images: " +
+                            (oldImages.length + imageFiles.length) +
+                            " (Max 10)"
+                          : "The server requires at least 5 image."}
                       </p>
                     </div>
                   </div>
@@ -1420,9 +1507,17 @@ export default function SellerProfilePage2() {
                     </p>
                   </div>
                 </div>
+                {submitError && (
+                  <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded-xl flex items-start gap-3 animate-fade-in">
+                    <X className="w-5 h-5 mt-0.5 text-red-600" />
+                    <div className="flex-1">
+                      <p className="font-semibold text-red-800">Error</p>
+                      <p className="text-sm">{submitError}</p>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
-
             {/* Step 3: Features */}
             {uploadStep === 3 && (
               <div className="p-6 space-y-6">
@@ -1468,9 +1563,9 @@ export default function SellerProfilePage2() {
                             if (titleDeedRef.current)
                               titleDeedRef.current.value = "";
                           }}
-                          className="text-red-500 hover:text-red-700 font-bold"
+                          className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
                         >
-                          ✕
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
                     )}
@@ -1517,9 +1612,9 @@ export default function SellerProfilePage2() {
                             if (floorPlanRef.current)
                               floorPlanRef.current.value = "";
                           }}
-                          className="text-red-500 hover:text-red-700 font-bold"
+                          className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
                         >
-                          ✕
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
                     )}
